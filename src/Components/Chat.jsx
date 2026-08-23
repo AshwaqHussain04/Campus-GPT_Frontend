@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { askQuestion } from '../api/client'
+import { askQuestion, getApiErrorMessage } from '../api/client'
 import ReactMarkdown from 'react-markdown'
 
 const suggestedPrompts = [
@@ -47,7 +47,7 @@ export default function Chat() {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', text: 'Something went wrong. Please try again.', error: true },
+        { role: 'assistant', text: getApiErrorMessage(err), error: true },
       ])
     } finally {
       setLoading(false)
