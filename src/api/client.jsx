@@ -28,8 +28,13 @@ export async function askQuestion(question) {
   return response.data
 }
 
-export async function login(username, password) {
+export async function login_admin(username, password) {
   const response = await client.post('/auth/login', { username, password })
+  return response.data
+}
+
+export async function signup_admin(name, username, password) {
+  const response = await client.post('/auth/signupAdmin', { name, password, username})
   return response.data
 }
 

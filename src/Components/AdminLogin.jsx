@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../api/client'
+import { login_admin } from '../api/client'
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
@@ -14,7 +14,7 @@ export default function AdminLogin() {
     setError('')
     setLoading(true)
     try {
-      const data = await login(username, password)
+      const data = await login_admin(username, password)
       localStorage.setItem('campusgpt_token', data.access_token)
       navigate('/admin/upload')
     } catch (err) {
@@ -40,6 +40,16 @@ export default function AdminLogin() {
         </div>
         <div className="mb-3">
           <label className="form-label">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Name</label>
           <input
             type="password"
             className="form-control"

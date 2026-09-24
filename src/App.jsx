@@ -14,6 +14,7 @@ import HomePage from './Components/HomePage'
 import LoginPage from "./Components/Login"
 import AboutPage from './Components/About'
 import SignupPage from "./Components/Signup"
+import StudentAuth from './Components/StudentAuth'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/test/signup" element={<StudentAuth />} />
           <Route
             path="/admin/upload"
             element={

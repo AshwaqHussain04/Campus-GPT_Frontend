@@ -38,6 +38,9 @@ export default function Navbar() {
           <Link to="/signup" className="nav-pill nav-pill-accent">
             Signup
           </Link>
+          <Link to="/test/signup" className="nav-pill nav-pill-accent">
+            Test Signup
+          </Link>
         </div>
       </div>
     </header>
