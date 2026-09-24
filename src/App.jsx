@@ -1,19 +1,14 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom'
 import Navbar from './Components/Navbar'
 import Chat from './Components/Chat'
 import AdminLogin from './Components/AdminLogin'
+import AdminSignup from './Components/AdminSignup'
 import AdminUpload from './Components/AdminUpload'
 import ProtectedRoute from './Components/ProtectedRoute'
-import Button from './Components/Button'
-import FeatureCard from './Components/FeatureCard'
-import StatCard from './Components/StatCard'
-import TestimonialCard from './Components/TestimonialCard'
-import FAQAccordion from './Components/FAQAccordion'
 import HomePage from './Components/HomePage'
-import LoginPage from "./Components/Login"
 import AboutPage from './Components/About'
-import SignupPage from "./Components/Signup"
+import StudentLogin from './Components/StudentLogin'
+import StudentSignup from './Components/StudentSignup'
 
 
 function App() {
@@ -24,15 +19,18 @@ function App() {
 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat" element={<ProtectedRoute requiredRole="student"><Chat /></ProtectedRoute>} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<Navigate to="/student/login" replace />} />
+          <Route path="/signup" element={<Navigate to="/student/signup" replace />} />
+          <Route path="/student/login" element={<StudentLogin />} />
+          <Route path="/student/signup" element={<StudentSignup />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/signup" element={<AdminSignup />} />
           <Route
             path="/admin/upload"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="admin">
                 <AdminUpload />
               </ProtectedRoute>
             }
@@ -50,7 +48,8 @@ function App() {
               <ul>
                 <li><Link to="/about">About</Link></li>
                 <li><Link to="/chat">AI Chat</Link></li>
-                <li><Link to="/login">Login</Link></li>
+                <li><Link to="/student/login">Student login</Link></li>
+                <li><Link to="/admin/login">Admin login</Link></li>
               </ul>
             </div>
             <div>

@@ -159,6 +159,50 @@ button {
   height: 2.7rem;
 }
 
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu-toggle {
+  cursor: pointer;
+}
+
+.nav-menu-toggle::after {
+  content: ' -> ';
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.nav-menu-toggle[aria-expanded='true']::after {
+  content: ' -';
+}
+
+.nav-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 30;
+  min-width: 9rem;
+  padding: 0.4rem;
+  display: grid;
+  gap: 0.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow);
+}
+
+.nav-menu-panel a {
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.55rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.nav-menu-panel a:hover {
+  background: var(--surface-2);
+}
+
 .hero-section {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -525,6 +569,35 @@ p {
   padding: 1.5rem;
   max-width: 700px;
   margin: 0 auto;
+}
+
+.auth-card-narrow {
+  max-width: 620px;
+}
+
+.auth-intro,
+.auth-switch {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.auth-switch {
+  margin: 1rem 0 0;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.auth-error {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #fca5a5;
+  border-radius: 0.75rem;
+  background: #fef2f2;
+  color: #b91c1c;
 }
 
 .auth-role-switch {

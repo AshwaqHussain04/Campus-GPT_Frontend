@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { login } from '../api/client'
+import { Link, useNavigate } from 'react-router-dom'
+import { getApiErrorMessage, loginAdmin } from '../api/client'
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
@@ -9,50 +9,64 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(event) {
+    event.preventDefault()
     setError('')
     setLoading(true)
+
     try {
-      const data = await login(username, password)
+      const data = await loginAdmin(username, password)
       localStorage.setItem('campusgpt_token', data.access_token)
       navigate('/admin/upload')
     } catch (err) {
-      setError('Incorrect username or password.')
+      setError(getApiErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="container py-5" style={{ maxWidth: '400px' }}>
-      <h3 className="mb-4">Admin Login</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Username</label>
-          <input
-            type="text"
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <div className="alert alert-danger py-2">{error}</div>}
-        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? 'Logging in…' : 'Login'}
-        </button>
-      </form>
-    </div>
+    <main className="container auth-page">
+      <div className="auth-card auth-card-narrow">
+        <p className="eyebrow">Administrator access</p>
+        <h1>Login to admin account</h1>
+        <p className="auth-intro">Use your admin username and password to continue.</p>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            Username
+            <input
+              name="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              required
+              autoComplete="username"
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </label>
+
+          {error && <p className="auth-error" role="alert">{error}</p>}
+
+          <button className="campus-btn campus-btn-primary w-100" type="submit" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          Need access? <Link to="/admin/signup">Create admin account</Link>
+        </p>
+      </div>
+    </main>
   )
 }

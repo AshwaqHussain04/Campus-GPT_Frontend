@@ -28,8 +28,28 @@ export async function askQuestion(question) {
   return response.data
 }
 
-export async function login(username, password) {
-  const response = await client.post('/auth/login', { username, password })
+export async function loginStudent(email, password) {
+  const response = await client.post('/auth/loginStudent', { email, password })
+  return response.data
+}
+
+export async function signupStudent({ regNo, email, password, name }) {
+  const response = await client.post('/auth/signupStudent', {
+    regNo: Number(regNo),
+    email,
+    password,
+    name,
+  })
+  return response.data
+}
+
+export async function loginAdmin(username, password) {
+  const response = await client.post('/auth/loginAdmin', { username, password })
+  return response.data
+}
+
+export async function signupAdmin({ name, email, password }) {
+  const response = await client.post('/auth/signupAdmin', { name, email, password })
   return response.data
 }
 
