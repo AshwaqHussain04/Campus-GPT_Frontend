@@ -23,6 +23,36 @@ export function getApiErrorMessage(error) {
   return 'The backend could not process that request. Please try again.'
 }
 
+export function getTokenRole() {
+  const token = localStorage.getItem('campusgpt_token')
+  if (!token) return null
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.role || null
+  } catch {
+    return null
+  }
+}
+
+export function getStoredUserName() {
+  return localStorage.getItem('campusgpt_user_name') || 'User'
+}
+
+export function saveAuthSession(accessToken, userName, role) {
+  localStorage.setItem('campusgpt_token', accessToken)
+  if (userName) localStorage.setItem('campusgpt_user_name', userName)
+  if (role) localStorage.setItem('campusgpt_user_role', role)
+  window.dispatchEvent(new Event('campusgpt-auth-change'))
+}
+
+export function logoutUser() {
+  localStorage.removeItem('campusgpt_token')
+  localStorage.removeItem('campusgpt_user_name')
+  localStorage.removeItem('campusgpt_user_role')
+  window.dispatchEvent(new Event('campusgpt-auth-change'))
+}
+
 export async function askQuestion(question) {
   const response = await client.post('/query', { question })
   return response.data

@@ -1,10 +1,25 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getStoredUserName, getTokenRole } from '../api/client'
 import Button from './Button'
 import FeatureCard from './FeatureCard'
 import StatCard from './StatCard'
 import TestimonialCard from './TestimonialCard'
 
 const HomePage = () => {
+  const [userName, setUserName] = useState(() => getStoredUserName())
+  const [userRole, setUserRole] = useState(() => getTokenRole())
+
+  useEffect(() => {
+    const syncAuth = () => {
+      setUserName(getStoredUserName())
+      setUserRole(getTokenRole())
+    }
+
+    window.addEventListener('campusgpt-auth-change', syncAuth)
+    return () => window.removeEventListener('campusgpt-auth-change', syncAuth)
+  }, [])
+
   const popularQuestions = [
     'What is Normalization?',
     'What are the Six Phases of Compiler?',
@@ -69,14 +84,17 @@ const HomePage = () => {
     <main>
       <section className="hero-section container">
         <div className="hero-copy">
-          <p className="eyebrow">Intelligent campus support</p>
+          {userRole && (
+            <p className="eyebrow">{userRole === 'admin' ? 'Admin access' : 'Student access'} • Welcome to </p>
+          )}
+          <p className="eyebrow"> • Intelligent campus support</p>
           <h1>
             Meet Your <span>Smart Campus Assistant</span>
           </h1>
           <p className="hero-text">
-            One intelligent platform for students and faculty to access campus
-            information, learning support, placement guidance, administrative
-            services, and AI-powered assistance.
+            {userRole
+              ? `Welcome back, ${userName}. Your campus assistant is ready to help with questions, support, and updates.`
+              : 'One intelligent platform for students and faculty to access campus information, learning support, placement guidance, administrative services, and AI-powered assistance.'}
           </p>
           <div className="hero-actions">
             <Button to="/chat">Start Chat</Button>

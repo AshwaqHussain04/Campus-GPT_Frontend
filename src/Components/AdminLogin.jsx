@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiErrorMessage, loginAdmin } from '../api/client'
+import { getApiErrorMessage, loginAdmin, saveAuthSession } from '../api/client'
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
@@ -16,7 +16,7 @@ export default function AdminLogin() {
 
     try {
       const data = await loginAdmin(username, password)
-      localStorage.setItem('campusgpt_token', data.access_token)
+      saveAuthSession(data.access_token, data.name || username, 'admin')
       navigate('/admin/upload')
     } catch (err) {
       setError(getApiErrorMessage(err))

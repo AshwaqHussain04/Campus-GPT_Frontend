@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getApiErrorMessage, signupStudent } from '../api/client'
+import { getApiErrorMessage, saveAuthSession, signupStudent } from '../api/client'
 
 export default function StudentSignup() {
   const [form, setForm] = useState({ name: '', email: '', regNo: '', password: '' })
@@ -23,7 +23,7 @@ export default function StudentSignup() {
     setLoading(true)
     try {
       const data = await signupStudent(form)
-      localStorage.setItem('campusgpt_token', data.access_token)
+      saveAuthSession(data.access_token, data.name || form.name, 'student')
       navigate('/chat')
     } catch (err) {
       setError(getApiErrorMessage(err))
