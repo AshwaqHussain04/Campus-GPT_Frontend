@@ -17,9 +17,16 @@ client.interceptors.request.use((config) => {
 })
 
 export function getApiErrorMessage(error) {
-  if (error.response?.data?.detail) return error.response.data.detail
+  const status = error.response?.status
+  if (status === 401) return 'Invalid email or password.'
+  if (status === 403) return "You don't have permission to access this area."
+  if (status === 409) return 'An account with these details already exists.'
+  if (status === 422) return 'Please check the information you entered and try again.'
   if (error.code === 'ECONNABORTED') return 'The request took too long. Please try again.'
-  if (!error.response) return 'Cannot connect to the Campus-GPT backend. Make sure it is running.'
+  if (!error.response) return 'Unable to connect to Campus-GPT. Please try again.'
+  if (error.response?.data?.detail && typeof error.response.data.detail === 'string') {
+    return error.response.data.detail
+  }
   return 'The backend could not process that request. Please try again.'
 }
 
@@ -58,6 +65,16 @@ export async function askQuestion(question) {
   return response.data
 }
 
+export async function getStudentChatHistory(limit = 50) {
+  const response = await client.get('/chat/history', { params: { limit } })
+  return response.data.items
+}
+
+export async function deleteStudentChatHistoryItem(chatId) {
+  const response = await client.delete(`/chat/history/${encodeURIComponent(chatId)}`)
+  return response.data
+}
+
 export async function loginStudent(email, password) {
   const response = await client.post('/auth/loginStudent', { email, password })
   return response.data
@@ -88,6 +105,23 @@ export async function uploadDocument(file) {
   formData.append('file', file)
   const response = await client.post('/admin/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return response.data
+}
+
+export async function getAdminDocuments() {
+  const response = await client.get('/admin/documents')
+  return response.data
+}
+
+export async function getAdminDocumentStats() {
+  const response = await client.get('/admin/documents/stats')
+  return response.data
+}
+
+export async function deleteAdminDocument(documentId) {
+  const response = await client.delete('/admin/documents', {
+    params: { document_id: documentId },
   })
   return response.data
 }

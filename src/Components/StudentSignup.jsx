@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getApiErrorMessage, saveAuthSession, signupStudent } from '../api/client'
+import { LoadingSpinner } from './LoadingSpinner'
+import AuthLayout, { PasswordField } from './AuthLayout'
 
 export default function StudentSignup() {
   const [form, setForm] = useState({ name: '', email: '', regNo: '', password: '' })
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [fieldError, setFieldError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
@@ -16,8 +19,13 @@ export default function StudentSignup() {
   async function handleSubmit(event) {
     event.preventDefault()
     setError('')
+    setFieldError('')
     if (form.password !== confirmPassword) {
-      setError('Passwords do not match.')
+      setFieldError('Passwords do not match.')
+      return
+    }
+    if (form.password.length < 8) {
+      setFieldError('Use at least 8 characters for your password.')
       return
     }
     setLoading(true)
@@ -33,24 +41,19 @@ export default function StudentSignup() {
   }
 
   return (
-    <main className="container auth-page">
-      <div className="auth-card auth-card-narrow">
-        <p className="eyebrow">Student access</p>
-        <h1>Create your account</h1>
-        <p className="auth-intro">Use your student details to get started with Campus-GPT.</p>
-        <form className="auth-form" onSubmit={handleSubmit}>
+    <AuthLayout eyebrow="Student access" title="Create your account" description="Use your student details to get started with Campus-GPT." footer={<>Already registered? <Link to="/student/login">Sign in</Link></>}>
+      <form className="auth-form" onSubmit={handleSubmit}>
           <label>Full name<input name="name" value={form.name} onChange={updateField} required autoComplete="name" /></label>
           <label>Student email<input name="email" type="email" value={form.email} onChange={updateField} required autoComplete="email" /></label>
           <label>Registration number<input name="regNo" type="number" value={form.regNo} onChange={updateField} required /></label>
-          <label>Password<input name="password" type="password" value={form.password} onChange={updateField} required autoComplete="new-password" /></label>
-          <label>Confirm password<input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required autoComplete="new-password" /></label>
+          <PasswordField label="Password" name="password" value={form.password} onChange={updateField} autoComplete="new-password" error={fieldError && form.password.length < 8 ? fieldError : ''} />
+          <PasswordField label="Confirm password" name="confirmPassword" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" error={fieldError && form.password === confirmPassword ? fieldError : ''} />
+          {fieldError && <p className="auth-error" role="alert">{fieldError}</p>}
           {error && <p className="auth-error" role="alert">{error}</p>}
           <button className="campus-btn campus-btn-primary w-100" type="submit" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create student account'}
+            {loading ? <><LoadingSpinner size="small" label="Creating account" /><span>Creating account...</span></> : 'Create student account'}
           </button>
         </form>
-        <p className="auth-switch">Already registered? <Link to="/student/login">Sign in</Link></p>
-      </div>
-    </main>
+    </AuthLayout>
   )
 }

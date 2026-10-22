@@ -9,26 +9,33 @@ export default function Navbar() {
   })
 
   const [openMenu, setOpenMenu] = useState(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [userName, setUserName] = useState(() => getStoredUserName())
   const [userRole, setUserRole] = useState(() => getTokenRole())
   const navActionsRef = useRef(null)
+  const navShellRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (navActionsRef.current && !navActionsRef.current.contains(event.target)) {
+      if (navShellRef.current && !navShellRef.current.contains(event.target)) {
         setOpenMenu(null)
+        setMobileOpen(false)
       }
     }
 
     const handleEscape = (event) => {
-      if (event.key === 'Escape') setOpenMenu(null)
+      if (event.key === 'Escape') {
+        setOpenMenu(null)
+        setMobileOpen(false)
+      }
     }
 
     const handleAuthChange = () => {
       setUserName(getStoredUserName())
       setUserRole(getTokenRole())
       setOpenMenu(null)
+      setMobileOpen(false)
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -52,20 +59,41 @@ export default function Navbar() {
     navigate('/')
   }
 
+  const dashboardRoute = userRole === 'admin' ? '/admin/upload' : '/chat'
+  const accountLabel = userRole === 'admin' ? 'Admin' : 'Student'
+
   return (
     <header className="topbar">
-      <div className="container nav-shell">
+      <div className={`container nav-shell ${mobileOpen ? 'mobile-menu-open' : ''}`} ref={navShellRef}>
         <Link to="/" className="brand-mark">
           <span className="brand-badge">CG</span>
           <span>Campus-GPT</span>
         </Link>
 
-        <nav className="nav-links" aria-label="Primary navigation">
-          <NavLink to="/" end>
+        <button
+          type="button"
+          className="mobile-nav-toggle"
+          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="primary-navigation"
+          onClick={() => {
+            setMobileOpen((open) => !open)
+            setOpenMenu(null)
+          }}
+        >
+          <span />
+          <span />
+          <span className="sr-only">{mobileOpen ? 'Close menu' : 'Open menu'}</span>
+        </button>
+
+        <nav id="primary-navigation" className="nav-links" aria-label="Primary navigation">
+          <NavLink to="/" end onClick={() => setMobileOpen(false)}>
             Home
           </NavLink>
-          <NavLink to="/chat">AI Chat</NavLink>
-          <NavLink to="/about">About</NavLink>
+          {userRole === 'student' && <NavLink to="/chat" onClick={() => setMobileOpen(false)}>AI Chat</NavLink>}
+          {userRole === 'admin' && <NavLink to="/admin/upload" onClick={() => setMobileOpen(false)}>Documents</NavLink>}
+          {!userRole && <NavLink to="/chat" onClick={() => setMobileOpen(false)}>AI Chat</NavLink>}
+          <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
         </nav>
 
         <div className="nav-actions" ref={navActionsRef}>
@@ -74,8 +102,11 @@ export default function Navbar() {
           </button>
 
           {userRole ? (
-            <div className="nav-user-box">
-              <button type="button" className="nav-pill nav-pill-accent" onClick={handleLogout}>
+            <div className="nav-user-controls">
+              <Link to={dashboardRoute} className="nav-account-button" aria-label={`${accountLabel} dashboard for ${userName}`} onClick={() => setMobileOpen(false)}>
+                {accountLabel}
+              </Link>
+              <button type="button" className="nav-logout-button" onClick={handleLogout}>
                 Logout
               </button>
             </div>
@@ -92,8 +123,8 @@ export default function Navbar() {
                 </button>
                 {openMenu === 'student' && (
                   <div className="nav-menu-panel">
-                    <Link to="/student/login">Sign in</Link>
-                    <Link to="/student/signup">Sign up</Link>
+                    <Link to="/student/login" onClick={() => { setOpenMenu(null); setMobileOpen(false) }}>Student login</Link>
+                    <Link to="/student/signup" onClick={() => { setOpenMenu(null); setMobileOpen(false) }}>Student signup</Link>
                   </div>
                 )}
               </div>
@@ -108,8 +139,8 @@ export default function Navbar() {
                 </button>
                 {openMenu === 'admin' && (
                   <div className="nav-menu-panel">
-                    <Link to="/admin/login">Sign in</Link>
-                    <Link to="/admin/signup">Sign up</Link>
+                    <Link to="/admin/login" onClick={() => { setOpenMenu(null); setMobileOpen(false) }}>Admin login</Link>
+                    <Link to="/admin/signup" onClick={() => { setOpenMenu(null); setMobileOpen(false) }}>Admin signup</Link>
                   </div>
                 )}
               </div>

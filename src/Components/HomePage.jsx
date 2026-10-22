@@ -3,10 +3,82 @@ import { Link } from 'react-router-dom'
 import { getStoredUserName, getTokenRole } from '../api/client'
 import Button from './Button'
 import FeatureCard from './FeatureCard'
-import StatCard from './StatCard'
-import TestimonialCard from './TestimonialCard'
 
-const HomePage = () => {
+const featureCards = [
+  {
+    icon: '✦',
+    title: 'AI campus assistant',
+    description: 'Ask questions about academic information, placements, departments, and campus services.',
+  },
+  {
+    icon: '▣',
+    title: 'Official knowledge sources',
+    description: 'Use uploaded PDF and TXT documents as the knowledge base behind campus answers.',
+  },
+  {
+    icon: '◎',
+    title: 'Context-aware retrieval',
+    description: 'Relevant indexed content helps the assistant respond with more useful campus context.',
+  },
+  {
+    icon: '◌',
+    title: 'Secure access',
+    description: 'Student and admin experiences are separated through backend-issued role authentication.',
+  },
+  {
+    icon: '◷',
+    title: 'Academic support',
+    description: 'Find guidance for coursework, syllabi, regulations, and other academic questions.',
+  },
+  {
+    icon: '⌂',
+    title: 'Campus services',
+    description: 'Explore information about library timings, administrative processes, and campus policies.',
+  },
+]
+
+const howItWorks = [
+  ['01', 'Ask a question', 'Start with a natural-language question about campus life or academics.'],
+  ['02', 'Search the knowledge base', 'Campus-GPT looks through the available official campus sources.'],
+  ['03', 'Retrieve relevant context', 'The most useful document content is passed into the response flow.'],
+  ['04', 'Receive an answer', 'The assistant returns a contextual answer and source information when available.'],
+]
+
+function ProductFlowVisual() {
+  return (
+    <div className="product-visual" aria-label="Campus-GPT question and answer flow">
+      <div className="product-visual-topline">
+        <span className="visual-status-dot" />
+        <span>Campus-GPT</span>
+        <span className="visual-status">Campus AI</span>
+      </div>
+      <div className="visual-question">
+        <span className="visual-label">STUDENT QUESTION</span>
+        <strong>What&apos;s the exam registration deadline?</strong>
+      </div>
+      <div className="visual-connector" aria-hidden="true">↓</div>
+      <div className="visual-source">
+        <span className="visual-source-icon">PDF</span>
+        <div>
+          <span className="visual-label">KNOWLEDGE RETRIEVAL</span>
+          <strong>Found in official campus knowledge</strong>
+        </div>
+        <span className="visual-check">✓</span>
+      </div>
+      <div className="visual-answer">
+        <span className="visual-label">AI RESPONSE</span>
+        <p>Registration closes on 28 September. Check the official examination notice for the complete process.</p>
+      </div>
+      <div className="visual-tags">
+        <span>PDF knowledge</span>
+        <span>RAG search</span>
+        <span>AI answer</span>
+      </div>
+    </div>
+  )
+}
+
+export default function HomePage() {
   const [userName, setUserName] = useState(() => getStoredUserName())
   const [userRole, setUserRole] = useState(() => getTokenRole())
 
@@ -20,183 +92,92 @@ const HomePage = () => {
     return () => window.removeEventListener('campusgpt-auth-change', syncAuth)
   }, [])
 
-  const popularQuestions = [
-    'What is Normalization?',
-    'What are the Six Phases of Compiler?',
-    'What is Parser?',
-    'What is Microservices Architecture?',
-    'Attendance requirements',
-    'Scholarship details',
-  ]
-
-  const featureCards = [
-    {
-      icon: '◷',
-      title: 'Academic Assistant',
-      description:
-        'Get help with coursework, syllabi, and academic planning from a single trusted interface.',
-    },
-    {
-      icon: '◫',
-      title: 'Placement Guidance',
-      description:
-        'Explore placement stories, interview prep, and internship resources for every department.',
-    },
-    {
-      icon: '◌',
-      title: 'Campus Events',
-      description:
-        'Stay updated on seminars, workshops, competitions, and campus happenings in real time.',
-    },
-    {
-      icon: '✦',
-      title: 'Assignments',
-      description:
-        'Track submission timelines, academic deadlines, and guidance without reading scattered notices.',
-    },
-    {
-      icon: '◍',
-      title: 'Library',
-      description:
-        'Find library rules, timings, resource access, and quick help for academic support.',
-    },
-    {
-      icon: '◎',
-      title: 'Department Information',
-      description:
-        'Access department-specific updates, contacts, and academic processes instantly.',
-    },
-    {
-      icon: '⌂',
-      title: 'Faculty Directory',
-      description:
-        'Reach faculty and office contacts with clear information and support pathways.',
-    },
-    {
-      icon: '▣',
-      title: 'Administrative Services',
-      description:
-        'Handle bonafide requests, scholarships, attendance concerns, and governance questions.',
-    },
-  ]
+  const chatRoute = userRole === 'student' ? '/chat' : '/student/login'
 
   return (
     <main>
       <section className="hero-section container">
         <div className="hero-copy">
-          {userRole && (
-            <p className="eyebrow">{userRole === 'admin' ? 'Admin access' : 'Student access'} • Welcome to </p>
-          )}
-          <p className="eyebrow"> • Intelligent campus support</p>
+          <p className="eyebrow">Intelligent campus support</p>
           <h1>
-            Meet Your <span>Smart Campus Assistant</span>
+            Meet your <span>smart campus assistant</span>
           </h1>
           <p className="hero-text">
             {userRole
-              ? `Welcome back, ${userName}. Your campus assistant is ready to help with questions, support, and updates.`
-              : 'One intelligent platform for students and faculty to access campus information, learning support, placement guidance, administrative services, and AI-powered assistance.'}
+              ? `Welcome back, ${userName}. Campus-GPT is ready to help you find useful campus information.`
+              : 'Campus-GPT helps students access academic information, campus services, placement guidance, department information, and official campus knowledge through an AI-powered assistant.'}
           </p>
           <div className="hero-actions">
-            <Button to="/chat">Start Chat</Button>
-            <Button to="/about" variant="secondary">
-              Explore Features
-            </Button>
+            <Button to={chatRoute}>Start chat</Button>
+            <a href="#capabilities" className="campus-btn campus-btn-secondary">Explore features</a>
           </div>
         </div>
 
-        <div className="hero-visual" aria-hidden="true">
-          <div className="visual-card">
-            <div className="visual-stack">
-              <div className="visual-window" />
-              <div className="visual-window alt" />
-            </div>
-            <div className="visual-laptop" />
-            <div className="visual-notes" />
-            <div className="visual-book" />
-          </div>
+        <div className="hero-visual">
+          <ProductFlowVisual />
         </div>
       </section>
 
-      <section className="stats-section container">
-        <StatCard value={18000} label="Students Assisted" suffix="+" />
-        <StatCard value={850} label="Faculty Connected" suffix="+" />
-        <StatCard value={120000} label="Questions Answered" suffix="+" />
-        <StatCard value={24} label="Departments Supported" />
+      <section className="capability-strip container" aria-label="Campus-GPT capabilities">
+        <article><strong>PDF + TXT</strong><span>Knowledge sources</span></article>
+        <article><strong>RAG</strong><span>Context-aware retrieval</span></article>
+        <article><strong>JWT</strong><span>Secure authentication</span></article>
+        <article><strong>24/7</strong><span>Campus assistance</span></article>
       </section>
 
-      <section className="container section-block">
+      <section className="container section-block" id="capabilities">
         <div className="section-heading">
           <p className="eyebrow">What Campus-GPT offers</p>
-          <h2>Designed for everyday campus life</h2>
+          <h2>Useful support for everyday campus questions</h2>
         </div>
         <div className="feature-grid">
           {featureCards.map((card) => (
-            <FeatureCard
-              key={card.title}
-              icon={card.icon}
-              title={card.title}
-              description={card.description}
-            />
+            <FeatureCard key={card.title} {...card} />
           ))}
         </div>
       </section>
 
-      <section className="container section-block split-section">
-        <div className="split-panel">
-          <div className="mini-illustration" />
+      <section className="container section-block">
+        <div className="section-heading">
+          <p className="eyebrow">How it works</p>
+          <h2>From a question to a contextual answer</h2>
         </div>
-        <div className="split-panel copy-panel">
-          <p className="eyebrow">Why Campus-GPT</p>
-          <h2>Built to simplify the university experience</h2>
+        <div className="how-it-works-grid">
+          {howItWorks.map(([number, title, description]) => (
+            <article className="process-card" key={number}>
+              <span className="process-number">{number}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="container section-block knowledge-section">
+        <div className="knowledge-copy">
+          <p className="eyebrow">Built around campus knowledge</p>
+          <h2>Answers grounded in the sources your campus provides</h2>
           <p>
-            Traditional campus portals scatter information across notices,
-            departments, and static pages. Campus-GPT brings it into one calm,
-            intelligent experience with guidance that feels immediate and
-            useful.
+            Campus-GPT uses official campus knowledge sources to provide more relevant answers. Admins can upload supported documents, and students can ask questions through the protected assistant.
           </p>
-          <ul className="check-list">
-            <li>Instant answers for academic and administrative questions</li>
-            <li>Clear pathways for placements, notices, and faculty support</li>
-            <li>A friendly experience for both students and faculty</li>
-          </ul>
+          <div className="knowledge-flow" aria-label="Knowledge flow">
+            <span>Official documents</span><b>→</b><span>Document processing</span><b>→</b><span>Knowledge index</span><b>→</b><span>Campus-GPT</span>
+          </div>
+        </div>
+        <div className="knowledge-panel">
+          <div className="knowledge-panel-line"><span>01</span><strong>Official documents</strong></div>
+          <div className="knowledge-panel-line"><span>02</span><strong>Processed campus content</strong></div>
+          <div className="knowledge-panel-line"><span>03</span><strong>Relevant answer context</strong></div>
         </div>
       </section>
 
-      <section className="container section-block">
-        <div className="section-heading">
-          <p className="eyebrow">Popular questions</p>
-          <h2>Start with the topics students ask most</h2>
+      <section className="container final-cta">
+        <div>
+          <p className="eyebrow">Your campus, easier to navigate</p>
+          <h2>Ready to explore your campus knowledge?</h2>
         </div>
-        <div className="question-grid">
-          {popularQuestions.map((item) => (
-            <Link to="/chat" key={item} className="question-card">
-              {item}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="container section-block">
-        <div className="section-heading">
-          <p className="eyebrow">Voices from campus</p>
-          <h2>Trusted by students and faculty</h2>
-        </div>
-        <div className="testimonial-grid">
-          <TestimonialCard
-            name="Naina R."
-            role="B.Tech Student • CSE"
-            quote="The assistant helped me find placement guidance and department updates in minutes."
-          />
-          <TestimonialCard
-            name="Prof. Arjun M."
-            role="Head of Department • Electronics"
-            quote="It feels like a polished academic portal, not just another chatbot."
-          />
-        </div>
+        <Link to={chatRoute} className="campus-btn campus-btn-primary">Start chat</Link>
       </section>
     </main>
   )
 }
-
-export default HomePage
-

@@ -1,4 +1,5 @@
 import { Navigate } from 'react-router-dom'
+import { PageLoader } from './LoadingSpinner'
 
 function getTokenRole() {
   const token = localStorage.getItem('campusgpt_token')
@@ -12,7 +13,11 @@ function getTokenRole() {
   }
 }
 
-export default function ProtectedRoute({ children, requiredRole }) {
+export default function ProtectedRoute({ children, requiredRole, authReady = true }) {
+  if (!authReady) {
+    return <PageLoader message="Checking access…" />
+  }
+
   const role = getTokenRole()
   if (!role) return <Navigate to={requiredRole === 'admin' ? '/admin/login' : '/student/login'} replace />
   if (requiredRole && role !== requiredRole) {
